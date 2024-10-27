@@ -1,0 +1,45 @@
+# Source
+FROM busybox as source
+
+RUN mkdir /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.134.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+
+# ADD https://github.com/openSUSE/catatonit/releases/download/v0.2.0/catatonit.x86_64 /tmp/catatonit
+# RUN chmod -x /tmp/catatonit
+
+# Frontend
+FROM node:16-alpine as front
+
+COPY --from=source /tmp/src/web /tmp/src
+
+WORKDIR /tmp/src/
+
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \ 
+  yarn install
+
+RUN yarn run build
+
+# Server
+FROM golang:1.20.14-alpine3.19 as server
+
+COPY --from=source /tmp/src /tmp/src
+COPY --from=front /tmp/src/build /tmp/src/web/build
+
+WORKDIR /tmp/src
+
+RUN apk add --no-cache --update g++
+RUN --mount=type=cache,target=/root/.cache/go-build go run gen_web.go
+
+WORKDIR /tmp/src/server
+
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+  CGO_ENABLED=0 go build -ldflags '-w -s' --o "torrserver" ./cmd 
+
+# Final
+FROM gcr.io/distroless/static
+LABEL org.opencontainers.image.source https://github.com/trexx/big-shell
+
+COPY --from=server /tmp/src/server/torrserver /torrserver
+# COPY --from=source /tmp/catatonit /usr/bin/docker-init
+
+ENTRYPOINT ["/torrserver"]
