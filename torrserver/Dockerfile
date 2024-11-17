@@ -37,7 +37,7 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
 
 # Final
 FROM gcr.io/distroless/static
-LABEL org.opencontainers.image.source https://github.com/trexx/big-shell
+LABEL org.opencontainers.image.source="https://github.com/trexx/big-shell"
 
 COPY --from=server /tmp/src/server/torrserver /torrserver
 # COPY --from=source /tmp/catatonit /usr/bin/docker-init
