@@ -2,10 +2,7 @@
 FROM busybox as source
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.134.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
-
-# ADD https://github.com/openSUSE/catatonit/releases/download/v0.2.0/catatonit.x86_64 /tmp/catatonit
-# RUN chmod -x /tmp/catatonit
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.135.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # Frontend
 FROM node:16-alpine as front
@@ -20,7 +17,7 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
 RUN yarn run build
 
 # Server
-FROM golang:1.20.14-alpine3.19 as server
+FROM golang:1.23-alpine as server
 
 COPY --from=source /tmp/src /tmp/src
 COPY --from=front /tmp/src/build /tmp/src/web/build
@@ -40,6 +37,5 @@ FROM gcr.io/distroless/static
 LABEL org.opencontainers.image.source="https://github.com/trexx/big-shell"
 
 COPY --from=server /tmp/src/server/torrserver /torrserver
-# COPY --from=source /tmp/catatonit /usr/bin/docker-init
 
 ENTRYPOINT ["/torrserver"]
