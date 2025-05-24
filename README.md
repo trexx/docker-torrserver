@@ -1,1 +1,2 @@
-# big-shell
+# docker-torrserver
+Torrserver custom image

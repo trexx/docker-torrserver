@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "docker:enableMajor",
+    "docker:pinDigests",
+    "default:automergeDigest",
+    "default:automergeMinor",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "packageRules": [
+    {
+      "enabled": false,
+      "matchDepTypes":[
+        "stage"
+      ]
+    }
+  ],
+  "enabledManagers": [
+    "dockerfile",
+    "github-actions"
+  ]
+}
