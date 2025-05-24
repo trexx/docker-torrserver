@@ -2,6 +2,7 @@ name: Docker
 
 on:
   push:
+    tags: [ '*' ]
 
 env:
   REGISTRY: ghcr.io
