@@ -1,5 +1,5 @@
 # Source
-FROM busybox as source
+FROM busybox:1-uclibc as source
 
 RUN mkdir /tmp/src
 RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.135.NE.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
