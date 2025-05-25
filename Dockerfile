@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
   CGO_ENABLED=0 go build -ldflags '-w -s' -tags=nosqlite -trimpath --o "torrserver" ./cmd 
 
 # Final
-FROM gcr.io/distroless/static
+FROM gcr.io/distroless/static@sha256:d9f9472a8f4541368192d714a995eb1a99bab1f7071fc8bde261d7eda3b667d8
 LABEL org.opencontainers.image.source="https://github.com/trexx/docker-torrserver"
 
 COPY --from=server /tmp/src/server/torrserver /torrserver
