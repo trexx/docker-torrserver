@@ -1,0 +1,29 @@
+--- server.go	2025-04-25 06:45:12.000000000 +0200
++++ server.go	2025-06-05 20:26:44.961486599 +0200
+@@ -4,7 +4,6 @@
+ 	"net"
+ 	"os"
+ 	"path/filepath"
+-	"server/tgbot"
+ 	"strconv"
+ 
+ 	"server/log"
+@@ -12,7 +11,7 @@
+ 	"server/web"
+ )
+ 
+-func Start(port, ip, sslport, sslCert, sslKey string, sslEnabled, roSets, searchWA bool, tgtoken string) {
++func Start(port, ip, sslport, sslCert, sslKey string, sslEnabled, roSets, searchWA bool) {
+ 	settings.InitSets(roSets, searchWA)
+ 	// https checks
+ 	if sslEnabled {
+@@ -68,9 +67,6 @@
+ 	settings.SslPort = sslport
+ 	settings.IP = ip
+ 
+-	if tgtoken != "" {
+-		tgbot.Start(tgtoken)
+-	}
+ 	web.Start()
+ }
+ 
