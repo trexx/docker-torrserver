@@ -2,7 +2,7 @@
 FROM busybox:1-uclibc as source
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.135.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.136.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # # Remove telebot
 COPY ./patches /tmp/patches
