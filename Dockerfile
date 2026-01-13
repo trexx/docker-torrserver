@@ -2,13 +2,13 @@
 FROM busybox:1-uclibc AS source
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.136.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.137.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # # Remove telebot
-COPY ./patches /tmp/patches
-RUN rm -rf /tmp/src/server/tgbot
-RUN patch /tmp/src/server/server.go /tmp/patches/remove_tgtoken.patch
-RUN patch /tmp/src/server/cmd/main.go /tmp/patches/main.patch
+# COPY ./patches /tmp/patches
+# RUN rm -rf /tmp/src/server/tgbot
+# RUN patch /tmp/src/server/server.go /tmp/patches/remove_tgtoken.patch
+# RUN patch /tmp/src/server/cmd/main.go /tmp/patches/main.patch
 
 # Frontend
 FROM node:16-alpine AS front
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
 RUN yarn run build
 
 # Server
-FROM golang:1.23-alpine AS server
+FROM golang:1.24-alpine AS server
 
 COPY --from=source /tmp/src /tmp/src
 COPY --from=front /tmp/src/build /tmp/src/web/build
