@@ -4,12 +4,6 @@ FROM busybox:1-uclibc AS source
 RUN mkdir /tmp/src
 RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.137.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
-# # Remove telebot
-# COPY ./patches /tmp/patches
-# RUN rm -rf /tmp/src/server/tgbot
-# RUN patch /tmp/src/server/server.go /tmp/patches/remove_tgtoken.patch
-# RUN patch /tmp/src/server/cmd/main.go /tmp/patches/main.patch
-
 # Frontend
 FROM node:16-alpine AS front
 
