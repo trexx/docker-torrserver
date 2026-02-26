@@ -2,7 +2,7 @@
 FROM busybox:1-uclibc AS source
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.137.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.141.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # Frontend
 FROM node:16-alpine AS front
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
 RUN yarn run build
 
 # Server
-FROM golang:1.24-alpine AS server
+FROM golang:1.26-alpine AS server
 
 COPY --from=source /tmp/src /tmp/src
 COPY --from=front /tmp/src/build /tmp/src/web/build
