@@ -36,6 +36,6 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
 FROM scratch AS compile
 LABEL org.opencontainers.image.source="https://github.com/trexx/docker-torrserver"
 
-COPY --from=server /tmp/src/server/torrserver /app/torrserver
+COPY --from=server /tmp/src/server/torrserver /torrserver
 
-ENTRYPOINT ["/app/torrserver"]
+ENTRYPOINT ["/torrserver"]
