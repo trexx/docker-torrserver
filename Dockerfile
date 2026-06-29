@@ -2,7 +2,7 @@
 FROM busybox:1-uclibc AS source
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.141.9.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.141.5.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # Frontend
 FROM node:16-alpine AS front
@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build go run gen_web.go
 WORKDIR /tmp/src/server
 
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
-  CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -tags=nosqlite -trimpath -o "torrserver" ./cmd
+  CGO_ENABLED=0 go build -ldflags '-w -s' -tags=nosqlite -trimpath --o "torrserver" ./cmd
 
 # Final
 FROM scratch AS compile
