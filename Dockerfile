@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build go run gen_web.go
 WORKDIR /tmp/src/server
 
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
-  CGO_ENABLED=0 go build -ldflags '-w -s' -tags=nosqlite -trimpath --o "torrserver" ./cmd 
+  CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -tags=nosqlite -trimpath -o "torrserver" ./cmd
 
 # Final
 FROM scratch AS compile
