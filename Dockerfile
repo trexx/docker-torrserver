@@ -24,7 +24,6 @@ COPY --from=front /tmp/src/build /tmp/src/web/build
 
 WORKDIR /tmp/src
 
-RUN apk add --no-cache --update g++
 RUN --mount=type=cache,target=/root/.cache/go-build go run gen_web.go
 
 WORKDIR /tmp/src/server
