@@ -1,0 +1,67 @@
+name: 'Upstream'
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'write'
+      pull-requests: 'write'
+    steps:
+      - uses: 'actions/checkout@v7'
+
+      - name: 'Check for a new TorrServer release'
+        id: 'check'
+        env:
+          GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          set -euo pipefail
+
+          current="$(grep -oP '(?<=/refs/tags/)[^/]+(?=\.tar\.gz)' Dockerfile)"
+          latest="$(gh release view --repo 'YouROK/TorrServer' --json 'tagName' --jq '.tagName')"
+
+          echo "current=${current}" >> "${GITHUB_OUTPUT}"
+          echo "latest=${latest}" >> "${GITHUB_OUTPUT}"
+          echo "branch=upstream/torrserver-${latest}" >> "${GITHUB_OUTPUT}"
+
+          if [ "${current}" = "${latest}" ]; then
+            echo "TorrServer is up to date (${current})." >> "${GITHUB_STEP_SUMMARY}"
+            echo 'outdated=false' >> "${GITHUB_OUTPUT}"
+          else
+            echo "TorrServer ${current} -> ${latest}" >> "${GITHUB_STEP_SUMMARY}"
+            echo 'outdated=true' >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: 'Open a pull request'
+        if: "steps.check.outputs.outdated == 'true'"
+        env:
+          GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          CURRENT: '${{ steps.check.outputs.current }}'
+          LATEST: '${{ steps.check.outputs.latest }}'
+          BRANCH: '${{ steps.check.outputs.branch }}'
+        run: |
+          set -euo pipefail
+
+          if git ls-remote --exit-code --heads origin "${BRANCH}" >/dev/null 2>&1; then
+            echo "Branch ${BRANCH} already exists, nothing to do." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+          sed -i "s|/refs/tags/${CURRENT}.tar.gz|/refs/tags/${LATEST}.tar.gz|" Dockerfile
+          git diff --exit-code Dockerfile && { echo 'Dockerfile unchanged, aborting.'; exit 1; }
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "${BRANCH}"
+          git commit -am "Update TorrServer to ${LATEST}"
+          git push origin "${BRANCH}"
+
+          gh pr create \
+            --base "${GITHUB_REF_NAME}" \
+            --head "${BRANCH}" \
+            --title "Update TorrServer to ${LATEST}" \
+            --body "Updates TorrServer from \`${CURRENT}\` to [\`${LATEST}\`](https://github.com/YouROK/TorrServer/releases/tag/${LATEST})."
