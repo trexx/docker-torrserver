@@ -12,7 +12,7 @@ jobs:
       contents: 'write'
       pull-requests: 'write'
     steps:
-      - uses: 'trexx/actions/.github/actions/checkout@shared-steps'
+      - uses: 'trexx/actions/.github/actions/checkout@main'
 
       - name: 'Check for a new TorrServer release'
         id: 'check'
