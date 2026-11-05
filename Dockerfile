@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
 RUN yarn run build
 
 # Server
-FROM golang:1.27-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS server
+FROM golang:1.27-alpine@sha256:fa4881266890ef051f0ce63afdfaccb69bbe8186084387f4fafd60d7ecbabc71 AS server
 
 COPY --from=source /tmp/src /tmp/src
 COPY --from=front /tmp/src/build /tmp/src/web/build
