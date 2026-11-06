@@ -1,10 +1,14 @@
 # Source
 FROM busybox:1-uclibc AS source
+# busybox ash: fail the RUN when any command in a pipe fails, not just the last.
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 RUN mkdir /tmp/src
 RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.149.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # Frontend
+# Node 16, as upstream's own Dockerfile: the web UI builds with react-scripts 4
+# (webpack 4), which needs it. Build stage only; it ships nothing at runtime.
 FROM node:16-alpine AS front
 
 COPY --from=source /tmp/src/web /tmp/src
@@ -33,7 +37,6 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
 
 # Final
 FROM scratch AS compile
-LABEL org.opencontainers.image.source="https://github.com/trexx/docker-torrserver"
 
 COPY --from=server /tmp/src/server/torrserver /torrserver
 
