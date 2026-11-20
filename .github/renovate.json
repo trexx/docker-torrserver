@@ -6,6 +6,12 @@
   ],
   "packageRules": [
     {
+      "description": "The web UI builds with react-scripts 4, which needs Node 16 (as upstream's Dockerfile)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["node"],
+      "allowedVersions": "<17"
+    },
+    {
       "enabled": false,
       "matchDepTypes":[
         "stage"
