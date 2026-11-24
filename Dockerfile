@@ -4,7 +4,7 @@ FROM busybox:1-uclibc AS source
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 RUN mkdir /tmp/src
-RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/MatriX.151.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
+RUN wget -qO- https://github.com/YouROK/TorrServer/archive/refs/tags/Silo.3.tar.gz | tar --strip-components=1 -xzv -C /tmp/src
 
 # Frontend
 # Node 16, as upstream's own Dockerfile: the web UI builds with react-scripts 4
